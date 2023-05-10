@@ -210,3 +210,92 @@ int main(void)
 ```
 
 x,yのアドレスを渡すことで2つの変数の数値を入れ替えるSwap関数が完成しました。
+
+### ポインタ実践
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	int a = 334;
+	int *ap = &a;
+
+	printf("a Address is %p\n", ap);
+	printf("a = %d\n", a);
+
+	*ap = 114514;
+
+	printf("a = %d\n", a);
+}
+```
+
+アドレスの確認を他の型でも確認してみましょう
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	char c = 'a';
+	char ac[] = "abc";
+	char *cp = &c;
+	char *acp = ac;
+
+	printf("c = %c\n", c);
+	printf("Address is : %p\n", cp);
+	printf("Address decimal number : %u\n", cp);
+
+	for(int i = 0; i < 3; i++){
+		printf("Address char is : %p\n", &ac[i]);
+	}
+
+
+
+	short s = 1;
+	short as[] = {1, 2, 3, 4, 5};
+	short *sp = &s;
+	short *asp = as;
+
+	printf("s = %d\n", s);
+	printf("Address is : %p\n", sp);
+	printf("Address decimal number : %u\n", sp);
+
+	for(int i = 0; i < 5; i++){
+		printf("Address char is : %p\n", &as[i]);
+	}
+
+
+
+	long l = 1;
+	long al[] = {1, 2, 3, 4, 5};
+	long *lp = &l;
+	long *alp = alp;
+
+	printf("l = %d\n", l);
+	printf("Address is : %p\n", lp);
+	printf("Address decimal number : %u\n", lp);
+
+	for(int i = 0; i < 5; i++){
+		printf("Address char is : %p\n", &al[i]);
+	}
+}
+```
+
+ポインタ変数はインクリメントが使えます。
+
+
+```C
+#include <stdio.h>
+
+int main(void)
+{
+	int a[] = {1, 2, 3, 4, 5};
+	int *p = a;
+
+	for(int i = 0; i < 5; i++){
+		printf("%d\n", *p++);
+	}
+}
+```
+
