@@ -230,6 +230,27 @@ int main(void)
 }
 ```
 
+Segmentation fault (core dumped)
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	int a = 334;
+	int *ap = 1919810;
+
+	printf("a Address is %p\n", ap);
+	printf("a = %d\n", a);
+
+	*ap = 114514;
+
+	printf("a = %d\n", a);
+}
+```
+
+
+
 アドレスの確認を他の型でも確認してみましょう
 
 ```c
