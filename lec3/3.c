@@ -2,9 +2,17 @@
 #include <stdlib.h>
 
 int main() {
-	int n; // 配列の要素数
-	int *arr; // 動的配列を割り当てるためのポインタ変数
+	int n;		// 配列の要素数
+	int *arr;	// 動的配列を割り当てるためのポインタ変数
 
 	scanf("%d", &n); // ユーザーからの入力を受け取る
-	arr = malloc(sizeof(int) * n);
+	arr = (int *)malloc(sizeof(int) * n);
+
+	for(int i = 0; i < n; i++){
+		arr[i] = i;
+	}
+
+	for(int i = 0; i < n; i++){
+		printf("%d\n", arr[i]);
+	}
 }
