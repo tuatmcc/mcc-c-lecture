@@ -117,21 +117,21 @@ int main() {
 ![mallocの戻り値](5.png "mallocの戻り値")
 
 ### 動的に確保したメモリの開放
-さて、前項では述べませんでしたが、このように動的に確保したメモリ領域はプログラマが使い終わったタイミングで解放する処理も記述する必要があります。不要なメモリを開放して挙げないと、コンピューターのメモリを使い切ってしまいます。不要なメモリを解放するために、`free` 関数を使います。利用方法としては、確保したポインタを `free` 関数に渡すことで実行することができます。次に例を示します。
+さて、前項では述べませんでしたが、このように動的に確保したメモリ領域はプログラマが使い終わったタイミングで解放する処理も記述する必要があります。不要なメモリを開放して挙げないと、コンピューターのメモリを使い切ってしまいます。メモリを確保して、不要になっても確保されたままだからです。不要なメモリを解放するために、`free` 関数を使います。利用方法としては、確保したポインタを `free` 関数に渡すことで実行することができます。次に例を示します。
 
 ```c
 #include <stdio.h>
 #include <stdlib.h>
 
 int main() {
-	int *arr = (int *)malloc(sizeof(int) * 3);
+	int *arr = (int *)malloc(sizeof(int) * 3);	// メモリ確保
 	arr[0] = 12;
 	arr[1] = 34;
 	arr[2] = 56;
 	for (int i = 0; i < 3; ++i) {
 		printf("%d\n", arr[i]);
 	}
-	free(arr);
+	free(arr);	// メモリ解放
 }
 ```
 
@@ -143,11 +143,13 @@ int main() {
 int main() {
 	int *arr = (int *)malloc(sizeof(int) * 3);
 	free(arr);
-	// 実行時にエラー発生
-	// free(): double free detected in tcache 2
-	// Aborted
-	free(arr);
+	free(arr);	// 実行時にエラー発生
 }
+```
+
+```
+free(): double free detected in tcache 2
+Aborted (core dumped)
 ```
 
 また、一度解放したメモリ領域を参照しようとしてはいけません。メモリの内容が破壊される可能性があります。
@@ -156,7 +158,7 @@ int main() {
 #include <stdlib.h>
 
 int main() {
-	int *arr = (int *)malloc(sizeof(int)*3);
+	int *arr = (int *)malloc(sizeof(int) * 3);
 	arr[0] = 12;
 	arr[1] = 34;
 	arr[2] = 56;
@@ -167,15 +169,17 @@ int main() {
 }
 ```
 
+---
+
 ## 構造体
 次に、構造体を紹介します。
-構造体とは、異なる型のいくつかの情報をまとめて一つの型として管理するためのものです。例を見てみましょう。
+構造体とは、異なる型のいくつかの情報をまとめて一つの型として管理するためのものです。変数の箱の中に変数の箱が入っているイメージです。例を見てみましょう。
 ```c
 struct Point2D {
 	int x, y;
 };
 ```
-上の例では、`int` 型の変数 `x`, `y` を持つ `Point2D` という構造体を定義しています。  
+上の例では、`int` 型のメンバ変数 `x`, `y` を持つ `Point2D` という構造体を**定義**しています。  
 実際に `Point2D` 型の変数を宣言する際には次のように行います。
 ```c
 struct Point2D {
@@ -186,7 +190,7 @@ int main() {
 	struct Point2D p;
 }
 ```
-また、`Point2D` の持つ `x`, `y` には次のようにアクセスすることができます。
+また、`Point2D` の持つ メンバ変数`x`, `y` には次のように`.`でアクセスすることができます。
 ```c
 #include <stdio.h>
 
@@ -201,36 +205,65 @@ int main() {
 	printf("p.x=%d, p.y=%d\n", p.x, p.y);
 }
 ```
-（補足）構造体が持っている変数のことをメンバ変数と呼びます。  
+
+![構造体](6.png "構造体")
+
+![構造体](7.png "構造体") 
   
-構造体を型として宣言することもできます。
+構造体を型として宣言(type definition)することで省略できます。下記の`typedef struct Point2D P2D;`は「`struct Point2D`を`P2D`とします。」という意味です。
 ```c
 struct Point2D {
 	int x, y;
 };
 typedef struct Point2D P2D;
+
+int main(){
+	P2D p2;
+}
 ```
 構造体の宣言とその構造体を型として宣言することを同時に行うこともできます。
 ```c
 typedef struct Point3D {
 	int x, y, z;
 } P3D;
+
+int main(){
+	P3D p3;
+}
 ```
 構造体のタグ名と型名に全く同じ名前を付けることもできます。
 ```c
 typedef struct Vec2D {
 	int x, y;
 } Vec2D;
+
+int main(){
+	Vec2D v2;
+}
 ```
 構造体が他の構造体をメンバに持つことも可能です。
 ```c
+typedef struct Point2D {
+	int x, y;
+} P2D;
+
 typedef struct Line2D {
 	P2D from, to;
 } Line2D;
+
+int main(){
+	Line2D l2;
+
+	l2.from.x = 0;
+	l2.from.y = 0;
+
+	l2.to.x = 1;
+	l2.to.y = 1;
+}
 ```
 
 構造体のポインタ変数を宣言することも可能です。  
-構造体のポインタ変数からメンバ変数にアクセスする際には->演算子を使います。
+構造体のポインタ変数からメンバ変数にアクセスする際には->(アロー)演算子を使います。
 ```c
 #include <stdio.h>
 
@@ -251,10 +284,13 @@ int main() {
 	// 構造体のポインタ変数からのメンバアクセスには
 	// -> 演算子を使う
 	printf("poi->x=%d, poi->y=%d\n", poi->x, poi->y);
+
+	// これと同じ
+	printf("poi->x=%d, poi->y=%d\n", (*poi).x, (*poi).y);
 }
 ```
 
-構造体のメモリを動的に確保することも可能です。
+構造体のメモリを動的に確保することも可能です。ちなみに`Point2D`は`int`型の変数が2つあるので`sizeof(Point2D)`は`8`を返します。
 ```c
 #include <stdio.h>
 #include <stdlib.h>
@@ -272,4 +308,57 @@ int main() {
 	printf("%d\n", p->x);
 	free(p);
 }
+```
+
+構造体の配列も動的に生成できます。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Point2D {
+	int x, y;
+} Point2D;
+
+
+int main() {
+	int length;
+
+	printf("Input lenght: ");
+	scanf("%d", &length);
+
+	Point2D *p = (Point2D *)malloc(sizeof(Point2D) * length);
+	
+	for (int i = 0; i < length; i++){
+		p[i].x = i;
+		p[i].y = 2 * i;
+	}
+
+	for (int i = 0; i < length; i++){
+		printf("p[%d].x = %d, p[%d].y = %d\n", i, p[i].x, i, p[i].y);
+	}
+
+	free(p);
+}
+```
+```
+Input lenght: 10
+p[0].x = 0, p[0].y = 0
+p[1].x = 1, p[1].y = 2
+p[2].x = 2, p[2].y = 4
+p[3].x = 3, p[3].y = 6
+p[4].x = 4, p[4].y = 8
+p[5].x = 5, p[5].y = 10
+p[6].x = 6, p[6].y = 12
+p[7].x = 7, p[7].y = 14
+p[8].x = 8, p[8].y = 16
+p[9].x = 9, p[9].y = 18
+```
+```
+Input lenght: 5
+p[0].x = 0, p[0].y = 0
+p[1].x = 1, p[1].y = 2
+p[2].x = 2, p[2].y = 4
+p[3].x = 3, p[3].y = 6
+p[4].x = 4, p[4].y = 8
 ```

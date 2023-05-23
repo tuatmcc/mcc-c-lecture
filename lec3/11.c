@@ -17,4 +17,6 @@ int main() {
 	// 構造体のポインタ変数からのメンバアクセスには
 	// -> 演算子を使う
 	printf("poi->x=%d, poi->y=%d\n", poi->x, poi->y);
+
+	printf("poi->x=%d, poi->y=%d\n", (*poi).x, (*poi).y);
 }
